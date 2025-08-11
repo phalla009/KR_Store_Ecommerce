@@ -270,3 +270,28 @@ textarea {
   font-weight: bold;
 }
 
+@media (max-width: 768px) {
+    .carousel-item img {
+      max-height: 250px !important;
+    }
+    .carousel-caption {
+      font-size: 0.9rem;
+      padding: 0.5rem;
+    }
+    .carousel-caption h3 {
+      font-size: 1.2rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .carousel-item img {
+      max-height: 180px !important;
+    }
+    .carousel-caption {
+      bottom: 5px;
+      padding: 0.4rem;
+    }
+    .carousel-caption p {
+      display: none; /* Hide text for very small screens */
+    }
+  }
