@@ -1,0 +1,49 @@
+{% extends 'front/master.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-4">{{ category }} Products</h3>
+    <div class="row">
+        {% if products %}
+            {% for product in products %}
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card h-100 shadow-sm d-flex flex-column">
+
+                        <a href="{{ url_for('product_detail', id=product.id) }}" class="d-block">
+                            <img src="{{ product.image }}"
+                                 class="card-img-top"
+                                 style="height: 200px; object-fit: contain;"
+                                 alt="{{ product.title }}">
+                        </a>
+
+                        <div class="card-body text-center">
+                            <p class="product-title text-truncate" title="{{ product.title }}">
+                                {{ product.title }}
+                            </p>
+                            <p class="card-text text-primary font-weight-bold">
+                                ${{ '%.2f'|format(product.price) }}
+                            </p>
+                        </div>
+
+                        <div class="card-footer bg-white border-0 d-flex justify-content-center">
+                            <input
+                                type="button"
+                                class="btn btn-gradient w-100 rounded-pill font-weight-semibold shadow btn_add_to_cart"
+                                value="Add To Cart"
+                                data-id="{{ product.id }}"
+                                data-title="{{ product.title }}"
+                                data-image="{{ product.image }}"
+                                data-price="{{ product.price }}"
+                            >
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No products found in this category.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
