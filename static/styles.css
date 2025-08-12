@@ -203,7 +203,7 @@ textarea {
 
 /* Gradient button style */
 .btn-gradient {
-     background: rgba(30, 144, 255, 0.85);
+    background: rgba(30, 144, 255, 0.85);
     /*background: linear-gradient(90deg, #ff7e5f, #feb47b);*/
     border: none;
     color: white;
@@ -214,12 +214,11 @@ textarea {
     border-radius: 25px !important;
 }
 .btn-gradient:hover {
-     background: rgb(0, 129, 255);
+    background: rgb(0, 129, 255);
     box-shadow: 0 8px 25px rgba(87, 149, 255, 0.7);
     transform: translateY(-3px);
     color: white;
 }
-
 
 /* Badge font size and weight */
 .badge {
@@ -240,6 +239,40 @@ textarea {
     }
     .btn-gradient {
         font-size: 0.9rem;
+    }
+}
+
+/* Beautiful Gradient Add to Cart Button */
+.btn-add-cart {
+    background-color: #0069d9;
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 126, 95, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-add-cart i {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Responsive for Mobile */
+@media (max-width: 576px) {
+    .btn-add-cart {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.8rem;
+        border-radius: 40px;
+    }
+    .btn-add-cart i {
+        font-size: 1rem;
+        margin-right: 0.4rem;
     }
 }
 
@@ -285,20 +318,21 @@ textarea {
         font-size: 1.2rem;
     }
 }
-
+/* Responsive for card image: smaller and centered on mobile */
 @media (max-width: 576px) {
-    .carousel-item img {
-        max-height: 180px !important;
-    }
-    .carousel-caption {
-        bottom: 5px;
-        padding: 0.4rem;
-    }
-    .carousel-caption p {
-        display: none;
-    }
+  /* កំណត់ទំហំនិងកណ្តាលរូបភាព */
+  .card > a.d-block {
+    height: 150px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .card-img-top {
+    max-height: 140px !important;
+    width: auto !important;
+    object-fit: contain !important;
+  }
 }
-
 /* Base position for nav links */
 #navbarSupportedContent .nav-link,
 #navbarSupportedContent .nav-link.dropdown-toggle,
@@ -307,7 +341,6 @@ textarea {
     color: #000; /* default text color */
     transition: color 0.3s ease;
 }
-
 /* Hide underline by default */
 #navbarSupportedContent .nav-link::after,
 #navbarSupportedContent .nav-link.dropdown-toggle::after,
