@@ -231,6 +231,9 @@ textarea {
     border-radius: 0.25rem;
     padding: 1rem;
 }
+.card {
+    border: none !important;
+}
 
 /* Responsive fix for small devices */
 @media (max-width: 576px) {
@@ -265,12 +268,12 @@ textarea {
 /* Responsive for Mobile */
 @media (max-width: 576px) {
     .btn-add-cart {
-        font-size: 0.85rem;
+        font-size: 0.7rem;
         padding: 0.5rem 0.8rem;
         border-radius: 40px;
     }
     .btn-add-cart i {
-        font-size: 1rem;
+        font-size: 0.8rem;
         margin-right: 0.4rem;
     }
 }
