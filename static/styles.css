@@ -257,7 +257,6 @@ textarea {
     align-items: center;
     justify-content: center;
 }
-
 .btn-add-cart i {
     margin-right: 0.5rem;
     font-size: 1.1rem;
@@ -274,6 +273,13 @@ textarea {
         font-size: 1rem;
         margin-right: 0.4rem;
     }
+}
+.btn-add-cart:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 15px rgba(0, 86, 179, 0.6);
+    transform: translateY(-3px);
+    transition: all 0.3s ease;
+    color: white;
 }
 
 /* SweetAlert2 small popup styling */
@@ -333,12 +339,25 @@ textarea {
     object-fit: contain !important;
   }
 }
+/* Active nav link text color black */
+#navbarSupportedContent .nav-item.active > .nav-link,
+#navbarSupportedContent .nav-item.active > .nav-link.dropdown-toggle {
+    color: #000000 !important; /* active text color black */
+}
+
+/* Show underline for active links */
+#navbarSupportedContent .nav-item.active > .nav-link::after,
+#navbarSupportedContent .nav-item.active > .nav-link.dropdown-toggle::after {
+    transform: scaleX(1);
+    transform-origin: bottom right;
+}
+
 /* Base position for nav links */
 #navbarSupportedContent .nav-link,
 #navbarSupportedContent .nav-link.dropdown-toggle,
 #navbarSupportedContent .dropdown-item {
     position: relative;
-    color: #000; /* default text color */
+    color: rgba(67, 67, 67, 0.93); /* default text color */
     transition: color 0.3s ease;
 }
 /* Hide underline by default */
