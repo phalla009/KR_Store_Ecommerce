@@ -11,15 +11,16 @@
             <h4 class="text-success">$ {{ product.price }}</h4>
             <p>{{ product.description }}</p>
             <p>Rating: {{ product.rating.rate }} ⭐ ({{ product.rating.count }} reviews)</p>
-            <input
+            <button
                 type="button"
-                class="btn btn-gradient w-25 rounded-pill font-weight-semibold shadow btn_add_to_cart mb-2"
-                value="Add To Cart"
+                class="btn btn-gradient w-50 rounded-pill font-weight-semibold shadow btn_add_to_cart mb-2"
                 data-id="{{ product['id'] }}"
                 data-title="{{ product['title'] }}"
                 data-image="{{ product['image'] }}"
                 data-price="{{ product['price'] }}"
             >
+                <i class="fa fa-shopping-cart mr-2"></i> Add To Cart
+            </button>
         </div>
     </div>
 </div>

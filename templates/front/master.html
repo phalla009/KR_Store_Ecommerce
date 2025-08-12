@@ -14,22 +14,6 @@
     />
     <link rel="stylesheet" href="/static/styles.css" />
     <link rel="icon" href="/static/image/logo.png" type="image/x-icon" />
-    <style>
-      /* Optional: some spacing on small screens for search & cart */
-      @media (max-width: 991.98px) {
-        form.d-flex {
-          flex-direction: column !important;
-          gap: 0.5rem !important;
-          width: 100%;
-        }
-        form.d-flex > * {
-          width: 100%;
-        }
-        #cart {
-          justify-content: center !important;
-        }
-      }
-    </style>
 </head>
 <body>
   <div class="container-fluid p-0 m-0">
@@ -56,24 +40,25 @@
             <a class="nav-link" href="/product">Product</a>
           </li>
           <li class="nav-item dropdown {% if request.path.startswith('/Category') %}active{% endif %}">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdownCountry"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Category
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownCountry">
-              <a class="dropdown-item" href="/Category/men's clothing">Men's clothing</a>
-              <a class="dropdown-item" href="/Category/Jewelery">Jewelery</a>
-              <a class="dropdown-item" href="/Category/Electronics">Electronics</a>
-              <a class="dropdown-item" href="/Category/women's clothing">Women's clothing</a>
-            </div>
-          </li>
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdownCountry"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            Category <i class="fas fa-caret-down" style="font-size: 0.7em; margin-left: 0.3em;"></i>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownCountry">
+            <a class="dropdown-item" href="/Category/men's clothing">Men's clothing</a>
+            <a class="dropdown-item" href="/Category/Jewelery">Jewelery</a>
+            <a class="dropdown-item" href="/Category/Electronics">Electronics</a>
+            <a class="dropdown-item" href="/Category/women's clothing">Women's clothing</a>
+          </div>
+        </li>
+
           <li class="nav-item {% if request.path.startswith('/about') %}active{% endif %}">
             <a class="nav-link" href="/about">About</a>
           </li>
@@ -95,16 +80,17 @@
                 style="padding-left: 2.2rem;"
               />
             </div>
-
-          <a
-            href="/cart"
-            class="btn btn-success d-flex align-items-center"
-            id="cart"
-            role="button"
-            style="gap: 0.3rem; border-radius: 25px; padding: 0.375rem 1rem;"
-          >
-            <i class="fas fa-shopping-cart"></i> <span>Cart(2)</span>
-          </a>
+            <button
+              type="button"
+              class="btn btn-primary d-flex align-items-center "
+              id="cart"
+              style="border-radius: 25px !important; padding: 0.375rem 1rem;"
+              data-url="/cart"
+              onclick="window.location.href=this.dataset.url"
+            >
+              <i class="fa-solid fa-cart-shopping"></i>
+              <span style="margin-left: 0.4rem;">Cart(2)</span>
+            </button>
         </form>
       </div>
     </nav>
@@ -243,15 +229,21 @@
                                     <h6 class="mb-0">${item.title}</h6>
                                 </td>
                                 <td>$${item.price}</td>
+                              <td>
+                                  <span class="qty-btn text-danger" onclick="removeQty(${index})">-</span>
+                                  <strong>${item.qty}</strong>
+                                  <span class="qty-btn text-primary" onclick="addQty(${index})">+</span>
+                                </td>
+
+                                <td>$${(item.qty * item.price).toFixed(2)}</td>
                                 <td>
-                                      <span class="btn btn-sm btn-danger rounded-circle qty-btn" onclick="removeQty(${index})">-</span>
-                                      <strong>${item.qty}</strong>
-                                      <span class="btn btn-sm btn-primary rounded-circle qty-btn" onclick="addQty(${index})">+</span>
-                                    </td>
-                                    <td>$${(item.qty * item.price).toFixed(2)}</td>
-                                    <td>
-                                      <button onclick="removeCartItem(${index})" class="btn btn-sm btn-danger rounded-pill btn-remove">X</button>
-                                    </td>
+                                    <button onclick="removeCartItem(${index})"
+                                       style="background: none; border: none; color: red; font-size: 16px; cursor: pointer;">
+                                    <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+
+
 
 
                             </tr>`;

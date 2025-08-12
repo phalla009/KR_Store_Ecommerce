@@ -59,15 +59,16 @@
           <p class="text-danger font-weight-bold h5">$ {{ '%.2f'|format(item['price']) }}</p>
         </div>
         <div class="card-footer bg-white border-0 d-flex justify-content-center">
-            <input
+            <button
                 type="button"
                 class="btn btn-gradient w-100 rounded-pill font-weight-semibold shadow btn_add_to_cart"
-                value="Add To Cart"
                 data-id="{{ item['id'] }}"
                 data-title="{{ item['title'] }}"
                 data-image="{{ item['image'] }}"
                 data-price="{{ item['price'] }}"
             >
+                <i class="fa fa-shopping-cart mr-2"></i> Add To Cart
+            </button>
         </div>
       </div>
     </div>

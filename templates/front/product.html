@@ -4,28 +4,29 @@
 <div class="container my-5">
   <div class="row g-4">
     {% for item in products %}
-    <div class="col-sm-6 col-md-4 col-lg-3">
+     <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
       <div class="card h-100 shadow-sm rounded position-relative overflow-hidden">
-        <a href="{{ url_for('product_detail', id=item['id']) }}" class="d-block overflow-hidden" style="height: 200px;">
+        <a href="{{ url_for('product_detail', id=item['id']) }}" class="d-block overflow-hidden" style="height: 220px;">
           <img src="{{ item['image'] }}" alt="{{ item['title'] }}" class="card-img-top h-100 w-100" style="object-fit: contain; transition: transform 0.4s ease;">
         </a>
-        <div class="badge bg-warning text-dark position-absolute top-2 start-2 px-3 py-1 rounded shadow-sm text-uppercase fw-semibold">
+        <div class="badge bg-warning text-dark position-absolute px-3 py-1 rounded shadow-sm text-uppercase font-weight-semibold" style="top: .5rem; left: .5rem;">
           {{ item['category'] }}
         </div>
         <div class="card-body d-flex flex-column justify-content-between text-center">
           <p class="card-title text-truncate" title="{{ item['title'] }}">{{ item['title'] }}</p>
-          <p class="text-danger fw-bold fs-5">$ {{ '%.2f'|format(item['price']) }}</p>
+          <p class="text-danger font-weight-bold h5">$ {{ '%.2f'|format(item['price']) }}</p>
         </div>
         <div class="card-footer bg-white border-0 d-flex justify-content-center">
-          <input
-            type="button"
-            class="btn btn-gradient w-100 rounded-pill fw-semibold shadow btn_add_to_cart"
-            value="Add To Cart"
-            data-id="{{ item['id'] }}"
-            data-title="{{ item['title'] }}"
-            data-image="{{ item['image'] }}"
-            data-price="{{ item['price'] }}"
-          >
+            <button
+                type="button"
+                class="btn btn-gradient w-100 rounded-pill font-weight-semibold shadow btn_add_to_cart"
+                data-id="{{ item['id'] }}"
+                data-title="{{ item['title'] }}"
+                data-image="{{ item['image'] }}"
+                data-price="{{ item['price'] }}"
+            >
+                <i class="fa fa-shopping-cart mr-2"></i> Add To Cart
+            </button>
         </div>
       </div>
     </div>
