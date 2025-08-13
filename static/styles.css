@@ -145,6 +145,51 @@ iframe {
     border: 0;
 }
 
+/* about */
+.about-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 60px 0;
+  }
+  .about-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+  .about-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #555;
+  }
+  .about-list li::before {
+    content: "✔";
+    color: #28a745;
+    margin-right: 8px;
+    font-weight: bold;
+  }
+  .counter-box {
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+  .counter-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff;
+  }
+  .counter-label {
+    font-size: 0.95rem;
+    color: #666;
+  }
+  .about-img {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .about-img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
 /* Reset border radius on multiple elements */
 .form-control,
 .btn,
