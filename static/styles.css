@@ -436,8 +436,4 @@ textarea {
     transform-origin: bottom right;
 }
 
-/* Dropdown icon rotate on show */
-.nav-item.dropdown.show .nav-link.dropdown-toggle i {
-    transform: rotate(180deg);
-    transition: transform 0.3s ease;
-}
+
