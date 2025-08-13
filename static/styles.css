@@ -247,15 +247,14 @@ textarea {
 
 /* Beautiful Gradient Add to Cart Button */
 .btn-add-cart {
-    background-color: rgba(30, 144, 255, 0.85);
+    background-color: rgb(255, 255, 255);
     border: none;
-    color: white;
+    color: rgba(67, 67, 67, 0.93);
     font-weight: 600;
     font-size: 1rem;
     padding: 0.6rem 1.2rem;
     border-radius: 50px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(255, 126, 95, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -278,13 +277,11 @@ textarea {
     }
 }
 .btn-add-cart:hover {
-    background-color: #0056b3;
-    box-shadow: 0 6px 15px rgba(0, 86, 179, 0.6);
+    background-color: rgb(255, 255, 255);
     transform: translateY(-3px);
     transition: all 0.3s ease;
-    color: white;
+    color: rgba(128, 128, 128, 0.55);
 }
-
 /* SweetAlert2 small popup styling */
 .swal2-popup-small {
     width: 250px !important;
