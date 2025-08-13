@@ -10,7 +10,7 @@
                     <div class="card h-100 shadow-sm d-flex flex-column">
 
                         <a href="{{ url_for('product_detail', id=product.id) }}" class="d-block">
-                            <img src="{{ product.thumbnail }}"
+                            <img src="{{ product.image }}"
                                  class="card-img-top"
                                  style="height: 200px; object-fit: contain;"
                                  alt="{{ product.title }}">
@@ -32,7 +32,7 @@
                                 value="Add To Cart"
                                 data-id="{{ product.id }}"
                                 data-title="{{ product.title }}"
-                                data-image="{{ product.thumbnail }}"
+                                data-image="{{ product.image }}"
                                 data-price="{{ product.price }}"
                             >
                         </div>
