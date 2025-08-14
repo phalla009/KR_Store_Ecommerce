@@ -46,7 +46,7 @@
     {% endif %}
         <div class="card h-100 shadow-sm rounded position-relative overflow-hidden">
           <a href="{{ url_for('product_detail', id=item['id']) }}" class="d-block overflow-hidden" style="height: 220px;">
-            <img src="{{ item['image'] }}" alt="{{ item['title'] }}" class="card-img-top h-100 w-100" style="object-fit: contain; transition: transform 0.4s ease;">
+            <img src="{{ item['thumbnail'] }}" alt="{{ item['title'] }}" class="card-img-top h-100 w-100" style="object-fit: contain; transition: transform 0.4s ease;">
           </a>
           <div class="badge bg-warning text-dark position-absolute px-3 py-1 rounded shadow-sm text-uppercase font-weight-semibold" style="top: .5rem; left: .5rem;">
             {{ item['category'] }}
@@ -61,7 +61,7 @@
                 class="btn-add-cart w-100 shadow btn_add_to_cart"
                 data-id="{{ item['id'] }}"
                 data-title="{{ item['title'] }}"
-                data-image="{{ item['image'] }}"
+                data-image="{{ item['thumbnail'] }}"
                 data-price="{{ item['price'] }}"
             >
               <i class="fa fa-shopping-cart"></i> Add To Cart
