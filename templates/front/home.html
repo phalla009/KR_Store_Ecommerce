@@ -54,10 +54,10 @@
     </a>
   </div>
   <!-- Products Grid -->
-  <div class="row mt-5">
+  <div class="row mt-5 ">
     {% for item in products[:15] %}
       {% if loop.index <= 11 %}
-        <div class="{% if loop.index <= 3 %}col-6 col-md-4 col-lg-4 mb-4{% else %}col-6 col-md-4 col-lg-3 mb-4{% endif %}" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+        <div class="{% if loop.index <= 3 %}col-6 col-md-4 col-lg-4 mb-4{% else %}col-6 col-md-4 col-lg-3 mb-2 {% endif %}" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
       {% else %}
         <div class="col-6 col-md-6 col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
       {% endif %}
