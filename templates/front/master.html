@@ -372,9 +372,9 @@
         // Sync button text on load
         if(localStorage.getItem('darkMode') === 'enabled') {
             document.body.classList.add('dark-mode');
-            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         } else {
-            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> ';
         }
 
         // Toggle dark mode
@@ -382,10 +382,10 @@
             document.body.classList.toggle('dark-mode');
             if(document.body.classList.contains('dark-mode')) {
                 localStorage.setItem('darkMode', 'enabled');
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> ';
             } else {
                 localStorage.setItem('darkMode', 'disabled');
-                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> ';
             }
         });
     }
