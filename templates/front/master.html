@@ -17,8 +17,7 @@
     <link rel="icon" href="/static/image/logo.png" type="image/x-icon" />
 
     <!-- AOS CSS -->
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
 
 </head>
@@ -52,7 +51,7 @@
           </li>
           <li class="nav-item dropdown {% if request.path.startswith('/Category') %}active{% endif %}">
           <a
-            class="nav-link dropdown-toggle"
+            class="nav-link"
             href="#"
             id="navbarDropdownCountry"
             role="button"
@@ -82,6 +81,7 @@
             <a class="nav-link" href="/contact">Contact</a>
           </li>
         </ul>
+
         <form class="d-flex align-items-center my-2 my-lg-0 position-relative" style="gap: 0.5rem; width: auto;">
             <div style="position: relative;">
               <!-- Search icon with space -->
@@ -105,6 +105,10 @@
             >
               <i class="fa-solid fa-cart-shopping"></i>
               <span style="margin-left: 0.4rem;">Cart(2)</span>
+            </button>
+             <!-- Dark Mode Toggle -->
+            <button type="button" id="darkModeToggle" class="btn btn-secondary ml-2 rounded-pill">
+              <i class="fas fa-moon"></i> Dark Mode
             </button>
         </form>
       </div>
@@ -181,7 +185,7 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- AOS JS -->
+  <!-- AOS JS -->
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
       AOS.init({
@@ -189,17 +193,17 @@
         once: true
       });
   </script>
+
   <script>
     let cart_list = JSON.parse(localStorage.getItem('cart_list') ?? '[]');
     let btn_add_to_cart = document.querySelectorAll('.btn_add_to_cart');
     let cart = document.getElementById('cart');
-
     let cart_list_tbody = document.getElementById('cart_list_tbody');
-
     let label_total_usd = document.getElementById('label_total_usd');
     let label_total_khr = document.getElementById('label_total_khr');
 
     cart.innerText = `Cart(${cart_list.length})`;
+
     btn_add_to_cart.forEach((item) => {
       item.addEventListener('click', function () {
         let dpl_index = cart_list.findIndex(
@@ -240,35 +244,29 @@
     total();
 
     function renderCartList() {
+      if(!cart_list_tbody) return;
       let string_tr = '';
-      cart_list_tbody.innerHTML = '';
       cart_list.forEach((item, index) => {
-        string_tr += `      <tr>
-                                <td style="width:80px">
-                                    <img src="${item.image}" class="img-fluid rounded" alt="Product 1">
-                                </td>
-                                <td style="width: 120px">
-                                    <h6 class="mb-0">${item.title}</h6>
-                                </td>
-                                <td>$${item.price}</td>
-                              <td>
-                                  <span class="qty-btn text-danger" onclick="removeQty(${index})">-</span>
-                                  <strong>${item.qty}</strong>
-                                  <span class="qty-btn text-primary" onclick="addQty(${index})">+</span>
-                                </td>
-
-                                <td>$${(item.qty * item.price).toFixed(2)}</td>
-                                <td>
-                                    <button onclick="removeCartItem(${index})"
-                                       style="background: none; border: none; color: red; font-size: 16px; cursor: pointer;">
-                                    <i class="fa fa-trash"></i>
-                                    </button>
-                                </td>
-
-
-
-
-                            </tr>`;
+        string_tr += `<tr>
+                        <td style="width:80px">
+                          <img src="${item.image}" class="img-fluid rounded" alt="Product 1">
+                        </td>
+                        <td style="width: 120px">
+                          <h6 class="mb-0">${item.title}</h6>
+                        </td>
+                        <td>$${item.price}</td>
+                        <td>
+                          <span class="qty-btn text-danger" onclick="removeQty(${index})">-</span>
+                          <strong>${item.qty}</strong>
+                          <span class="qty-btn text-primary" onclick="addQty(${index})">+</span>
+                        </td>
+                        <td>$${(item.qty * item.price).toFixed(2)}</td>
+                        <td>
+                          <button onclick="removeCartItem(${index})" style="background: none; border: none; color: red; font-size: 16px; cursor: pointer;">
+                            <i class="fa fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>`;
       });
       cart_list_tbody.innerHTML = string_tr;
     }
@@ -313,15 +311,14 @@
 
     function total() {
       let total_usd = 0;
-      let total_khr = 0;
       cart_list.forEach((item) => {
         total_usd += parseFloat(item.qty) * parseFloat(item.price);
       });
-      total_khr = total_usd * 4100;
+      let total_khr = total_usd * 4100;
       total_khr = Math.ceil(total_khr / 100) * 100;
 
-      label_total_usd.innerText = `$${total_usd.toFixed(2)}`;
-      label_total_khr.innerText = `៛${total_khr.toLocaleString()}`;
+      if(label_total_usd) label_total_usd.innerText = `$${total_usd.toFixed(2)}`;
+      if(label_total_khr) label_total_khr.innerText = `៛${total_khr.toLocaleString()}`;
     }
 
     function addQty(index) {
@@ -341,7 +338,35 @@
       renderCartList();
       total();
     }
+
+
+
   </script>
+  // Dark Mode Toggle
+  <script>
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if(darkModeToggle) {
+        // Sync button text on load
+        if(localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        } else {
+            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+        }
+
+        // Toggle dark mode
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if(document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            }
+        });
+    }
+</script>
 
 </body>
 </html>
