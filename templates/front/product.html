@@ -1,10 +1,14 @@
 {% extends 'front/master.html' %}
 
 {% block content %}
-<div class="container my-5">
+<div class="container my-5" id="productsContainer">
   <div class="row g-4">
     {% for item in products %}
-     <div class="col-6 col-md-4 col-lg-3 mb-4" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+     <div class="col-6 col-md-4 col-lg-3 mb-4 product-item"
+          data-title="{{ item['title']|lower }}"
+          data-category="{{ item['category']|lower }}"
+          data-aos="fade-up"
+          data-aos-delay="{{ loop.index * 50 }}">
       <div class="card h-100 shadow-sm rounded position-relative overflow-hidden product-card">
         <a href="{{ url_for('product_detail', id=item['id']) }}" class="d-block overflow-hidden" style="height: 220px;">
           <img src="{{ item['thumbnail'] }}" alt="{{ item['title'] }}" class="card-img-top h-100 w-100 product-img" style="object-fit: contain; transition: transform 0.4s ease;">
@@ -33,4 +37,7 @@
     {% endfor %}
   </div>
 </div>
+
+
+
 {% endblock %}

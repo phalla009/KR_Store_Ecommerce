@@ -83,18 +83,24 @@
         </ul>
 
         <form class="d-flex align-items-center my-2 my-lg-0 position-relative" style="gap: 0.5rem; width: auto;">
-            <div style="position: relative;">
-              <!-- Search icon with space -->
+           <div style="position: relative;">
               <i class="fas fa-search"
                  style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: gray;"></i>
+
               <input
+                id="searchInput"
                 class="form-control"
                 type="search"
-                placeholder="Search"
+                placeholder="Search products or categories"
                 aria-label="Search"
-                style="padding-left: 2.2rem;"
+                style="padding-left: 2.5rem;"
               />
+
+              <!-- Dropdown results -->
+              <div id="searchResults" class="list-group position-absolute mt-1"
+                   style="width: 100%; z-index: 1050; max-height: 300px; overflow-y: auto;"></div>
             </div>
+
             <button
               type="button"
               class="btn btn-primary d-flex align-items-center "
@@ -338,11 +344,28 @@
       renderCartList();
       total();
     }
-
-
-
   </script>
-  // Dark Mode Toggle
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const productItems = document.querySelectorAll('.product-item');
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+
+        productItems.forEach(item => {
+            const title = item.getAttribute('data-title');
+            const category = item.getAttribute('data-category');
+
+            if(title.includes(query) || category.includes(query)) {
+                item.style.display = ''; // show
+            } else {
+                item.style.display = 'none'; // hide
+            }
+        });
+    });
+ </script>
+{#  Dark Mode Toggle#}
   <script>
     const darkModeToggle = document.getElementById('darkModeToggle');
     if(darkModeToggle) {
