@@ -2,7 +2,6 @@ import requests
 from flask_mail import Message
 import config
 
-
 def to_number(val):
     try:
         return int(val)
@@ -11,6 +10,7 @@ def to_number(val):
             return float(val)
         except:
             return 0
+
 def process_checkout(app, mail, data):
     total_usd = sum(to_number(item["qty"]) * to_number(item["price"]) for item in data["cart"])
     total_khr = total_usd * config.USD_TO_KHR
@@ -25,7 +25,7 @@ def process_checkout(app, mail, data):
 
 👤 Name: {data['first_name']} {data['last_name']}
 🏠 Address: {data['address']}, {data['city']}, {data['country']} {data['zip']}
-📧 Email: {data['email']}
+📧 Email: {data.get('email', 'N/A')}
 📱 Phone: {data['phone']}
 
 ---- 📦 Order Summary ----
@@ -36,21 +36,26 @@ Total:
 🇰🇭 KHR: ៛{total_khr:,.2f}
 """
 
-    # Send Telegram message
-    url = f"https://api.telegram.org/bot{config.BOT_TOKEN}/sendMessage"
-    payload = {"chat_id": config.CHAT_ID, "text": message}
-    response = requests.post(url, json=payload)
+    # --- Send Telegram ---
+    try:
+        url = f"https://api.telegram.org/bot{config.BOT_TOKEN}/sendMessage"
+        payload = {"chat_id": config.CHAT_ID, "text": message}
+        telegram_response = requests.post(url, json=payload)
+        telegram_response.raise_for_status()
+    except Exception as e:
+        return {"status": "error", "message": f"Telegram error: {e}"}
 
-    # Send email
-    msg = Message(
-        subject="Your Order Confirmation",
-        sender=app.config['MAIL_DEFAULT_SENDER'],
-        recipients=[data['email']],
-        body=message
-    )
-    mail.send(msg)
+    # --- Send Email ---
+    if data.get("email"):
+        try:
+            msg = Message(
+                subject="Your Order Confirmation",
+                sender=app.config['MAIL_DEFAULT_SENDER'],
+                recipients=[data['email']],
+                body=message
+            )
+            mail.send(msg)
+        except Exception as e:
+            return {"status": "error", "message": f"Email error: {e}"}
 
-    if response.status_code == 200:
-        return {"status": "success"}
-    else:
-        return {"status": "error", "message": response.text}
+    return {"status": "success"}
