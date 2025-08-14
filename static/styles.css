@@ -53,10 +53,24 @@ body.dark-mode .counter-box:hover {
 body.dark-mode .navbar {
     background-color: #1f1f1f !important;
 }
+/* Default dark mode link colors */
 body.dark-mode .navbar .nav-link,
 body.dark-mode .navbar .navbar-brand,
 body.dark-mode .dropdown-item {
     color: #f0f0f0 !important;
+}
+/* Dark mode active navbar link */
+body.dark-mode .navbar .nav-item.active .nav-link {
+    color: #a7a7a7 !important;
+}
+/* Dark mode active dropdown item */
+body.dark-mode .dropdown-item.active {
+    color: #a7a7a7 !important;
+}
+/* Hover effect in dark mode */
+body.dark-mode .navbar .nav-link:hover,
+body.dark-mode .dropdown-item:hover {
+    color: #a7a7a7 !important;
 }
 body.dark-mode footer {
     background-color: #1f1f1f;
