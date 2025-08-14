@@ -44,7 +44,25 @@
     position: relative;
     overflow: hidden;
 }
-
+.carousel-caption {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+}
+.carousel-item img {
+  transition: transform 0.8s ease;
+}
+.carousel-item.active img {
+  transform: scale(1.05);
+}
+.carousel-fade .carousel-item {
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 1s;
+}
+.carousel-fade .carousel-item.active {
+  opacity: 1;
+}
 /* Vertical brand label */
 .brand-vertical {
     writing-mode: vertical-lr;
