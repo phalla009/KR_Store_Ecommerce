@@ -297,7 +297,14 @@ body.dark-mode table {
     transform: translateY(-3px);
     color: rgba(128, 128, 128, 0.55);
 }
-
+.circle-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 10px;
+}
 /* ================= Carousel ================= */
 .carousel-caption {
     background: rgba(0, 0, 0, 0.5);
