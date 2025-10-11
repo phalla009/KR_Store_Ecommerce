@@ -61,6 +61,22 @@
           </div>
           <div class="card-body d-flex flex-column justify-content-between text-center">
             <p class="card-title text-truncate" title="{{ item['title'] }}">{{ item['title'] }}</p>
+              <!-- Rating Stars -->
+              <div class="mb-2">
+                {% set full_stars = item['rating']|int %}
+                {% set half_star = 1 if (item['rating'] - full_stars) >= 0.5 else 0 %}
+                {% set empty_stars = 5 - full_stars - half_star %}
+
+                {% for i in range(full_stars) %}
+                  <i class="bi bi-star-fill text-warning"></i>
+                {% endfor %}
+                {% if half_star %}
+                  <i class="bi bi-star-half text-warning"></i>
+                {% endif %}
+                {% for i in range(empty_stars) %}
+                  <i class="bi bi-star text-warning"></i>
+                {% endfor %}
+            </div>
             <p class="text-danger font-weight-bold h5">$ {{ '%.2f'|format(item['price']) }}</p>
           </div>
           <div class="card-footer bg-white border-0 d-flex justify-content-center">
