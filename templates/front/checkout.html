@@ -55,7 +55,7 @@
                             <input type="text" class="form-control" name="phone" placeholder="+855 12 345 678" required>
                         </div>
                         <button class="btn btn-primary btn-block btn-lg mt-3 btn-rounded" type="submit">
-                          Place Order <i class="fa fa-check"></i>
+                          Order Now
                         </button>
                         <p class="mt-3 text-center text-muted" style="font-size: 0.95rem;">
                             By placing your order, you agree to our
@@ -85,10 +85,31 @@
         </div>
     </div>
 </div>
+
+<!-- QR Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center bg-primary text-white border-0">
+        <div class="logo fw-bold fs-4 text-center">KHQR</div>
+      </div>
+      <div class="modal-body text-center position-relative">
+        <div class="timer position-absolute top-0 start-50 translate-middle-x mt-2 fw-bold text-dark" id="countdown">
+          05:00
+        </div>
+        <img id="qrImage" src="" alt="QR Code" class="img-fluid mt-4 mb-2 rounded shadow-sm" />
+        <div class="company fw-semibold text-primary mb-1" id="merchantName">Merchant Name</div>
+        <p id="qrAmount" class="fw-bold text-dark"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Toast container -->
 <div aria-live="polite" aria-atomic="true" style="position: relative; z-index: 1050;">
     <div id="toastContainer" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%);"></div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 // Toast function
 function showToast(message, type = "success") {
@@ -134,13 +155,17 @@ renderCartSummary();
 // Checkout form submit
 document.getElementById("checkoutForm").addEventListener("submit", function (e) {
     e.preventDefault();
-    if (!cart_list.length) { showToast("Your cart is empty.", "error"); return; }
+
+    if (!cart_list.length) {
+        showToast("Your cart is empty.", "error");
+        return;
+    }
 
     const form = e.target;
     const submitBtn = form.querySelector("button[type='submit']");
     submitBtn.disabled = true;
 
-    const data = {
+    const orderData = {
         first_name: form.first_name.value,
         last_name: form.last_name.value,
         address: form.address.value,
@@ -152,32 +177,163 @@ document.getElementById("checkoutForm").addEventListener("submit", function (e) 
         cart: cart_list
     };
 
-    fetch("/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    })
-    .then(res => res.json())
-    .then(resData => {
-        if (resData.status === "success") {
-            showToast("Order sent successfully!");
-            form.reset();
-            localStorage.removeItem('cart_list');
-            cart_list = [];
-            renderCartSummary();
-            if (cart) cart.innerText = "Cart(0)";
-        } else {
-            showToast("Failed to send order: " + (resData.message || "Unknown error"), "error");
+    const formData = new FormData();
+    formData.append("cart", JSON.stringify(cart_list));
+
+    axios.post("/buy_now", formData)
+    .then(qrRes => {
+        if (qrRes.data.status !== "success") throw new Error(qrRes.data.message || "Failed to generate QR");
+
+        document.getElementById("qrImage").src = qrRes.data.qr_url;
+        document.getElementById("qrAmount").textContent = `Amount: ${qrRes.data.currency} ${qrRes.data.amount}`;
+        document.querySelector(".company").textContent = qrRes.data.merchant_name;
+
+        let md5Input = document.getElementById("md5");
+        if (!md5Input) {
+            md5Input = document.createElement("input");
+            md5Input.type = "hidden";
+            md5Input.id = "md5";
+            document.body.appendChild(md5Input);
         }
+        md5Input.value = qrRes.data.md5;
+
+        const qrModalEl = document.getElementById("qrModal");
+        const qrModal = new bootstrap.Modal(qrModalEl, { backdrop: 'static', keyboard: false });
+        qrModal.show();
+
+        const countdownEl = document.getElementById("countdown");
+        let remaining = 5 * 60;
+        let isPaid = false; // ✅ Prevent duplicate checkout
+
+        const countdownInterval = setInterval(() => {
+            const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
+            const seconds = String(remaining % 60).padStart(2, '0');
+            countdownEl.textContent = `${minutes}:${seconds}`;
+            if (remaining <= 0) {
+                clearInterval(countdownInterval);
+                clearInterval(pollInterval);
+                showToast("Payment timeout! Please try again.", "error");
+                qrModal.hide();
+            }
+            remaining--;
+        }, 1000);
+
+        const pollInterval = setInterval(() => {
+            if (isPaid) return; // ✅ Stop duplicate checkout
+
+            axios.post('/check-payment', { md5: md5Input.value })
+            .then(response => {
+                if (response.data.data && !isPaid) {
+                    isPaid = true; // ✅ Mark as paid
+                    clearInterval(countdownInterval);
+                    clearInterval(pollInterval);
+
+                    // ✅ Checkout once only
+                    axios.post("/checkout", orderData)
+                    .then(orderRes => {
+                        if (orderRes.data.status === "success") {
+                            localStorage.removeItem("cart_list");
+                            cart_list = [];
+                            renderCartSummary();
+                            if (cart) cart.innerText = "Cart(0)";
+
+                            showToast("Payment successful! Redirecting...", "success");
+                            qrModal.hide();
+
+                            window.location.replace("{{ url_for('customer_thanks') }}");
+                        } else {
+                            showToast("Checkout failed: " + (orderRes.data.message || "Unknown error"), "error");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Checkout error:", err);
+                        showToast("Error during checkout.", "error");
+                    });
+                } else {
+                    console.log("Waiting for QR scan...");
+                }
+            })
+            .catch(err => {
+                console.error("Payment check error:", err);
+                clearInterval(countdownInterval);
+                clearInterval(pollInterval);
+            });
+        }, 3000);
+
+        qrModalEl.addEventListener("hidden.bs.modal", () => {
+            clearInterval(countdownInterval);
+            clearInterval(pollInterval);
+        });
     })
-    .catch(error => {
-        showToast("Error sending order.", "error");
-        console.error("Checkout Error:", error);
+    .catch(err => {
+        showToast(err.message || "Failed to start payment.", "error");
+        console.error(err);
     })
     .finally(() => submitBtn.disabled = false);
 });
 
-// Dark Mode sync with master.html
+// Countdown + payment check
+function startQRCountdown(duration, md5, modalInstance) {
+  const countdownEl = document.getElementById("countdown");
+  let remaining = duration;
+
+  const interval = setInterval(() => {
+    const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const seconds = String(remaining % 60).padStart(2, '0');
+    countdownEl.textContent = `${minutes}:${seconds}`;
+
+    if (remaining <= 0) {
+      clearInterval(interval);
+      clearInterval(checkInterval);
+      showToast("Payment timeout! Cart is not cleared.", "error");
+      modalInstance.hide();
+    }
+    remaining--;
+  }, 1000);
+
+  const checkInterval = setInterval(() => {
+    fetch("/check-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ md5 })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data?.status === "SUCCESS" || data?.transaction_status === "SUCCESS") {
+        // ✅ Clear cart immediately
+        localStorage.removeItem("cart_list");
+        cart_list = [];
+        renderCartSummary();
+        if (cart) cart.innerText = "Cart(0)";
+
+        showToast("Payment successful! Thank you!", "success");
+
+        // ✅ Send Telegram notification
+        fetch("/send-telegram", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cart: data.cart, amount: data.amount })
+        });
+
+        clearInterval(interval);
+        clearInterval(checkInterval);
+
+        // ✅ Now hide modal
+        modalInstance.hide();
+      }
+    })
+    .catch(err => console.error("Check payment error:", err));
+  }, 5000);
+
+  // Prevent clearing intervals twice
+  const modalEl = modalInstance._element || document.getElementById("qrModal");
+  modalEl.addEventListener("hidden.bs.modal", () => {
+    clearInterval(interval);
+    clearInterval(checkInterval);
+  });
+}
+
+// Dark Mode sync
 if(localStorage.getItem('darkMode') === 'enabled') {
     document.body.classList.add('dark-mode');
 }
