@@ -1,14 +1,13 @@
 {% extends 'front/master.html' %}
 
 {% block content %}
-<div class="container mt-4"  data-aos="fade-up">
+<div class="container mt-4" data-aos="fade-up">
     <h3 class="mb-4">{{ category }} Products</h3>
     <div class="row">
         {% if products %}
             {% for product in products %}
                 <div class="col-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card h-100 shadow-sm d-flex flex-column">
-
+                    <div class="card h-100 shadow-sm d-flex flex-column position-relative">
                         <a href="{{ url_for('product_detail', id=product.id) }}" class="d-block">
                             <img src="{{ product.thumbnail }}"
                                  class="card-img-top"
@@ -16,11 +15,16 @@
                                  alt="{{ product.title }}">
                         </a>
 
+                        <!-- Category badge -->
+                        <div class="badge bg-warning text-dark position-absolute px-3 py-1 rounded shadow-sm text-uppercase fw-semibold" style="top: .5rem; left: .5rem;">
+                            {{ product.category }}
+                        </div>
+
                         <div class="card-body text-center">
                             <p class="product-title text-truncate" title="{{ product.title }}">
                                 {{ product.title }}
                             </p>
-                            <p class="card-text text-primary font-weight-bold">
+                            <p class="card-text text-primary fw-bold">
                                 ${{ '%.2f'|format(product.price) }}
                             </p>
                         </div>
@@ -28,7 +32,7 @@
                         <div class="card-footer bg-white border-0 d-flex justify-content-center">
                             <input
                                 type="button"
-                                 class="btn-add-cart w-100 shadow btn_add_to_cart"
+                                class="btn-add-cart w-100 shadow btn_add_to_cart"
                                 value="Add To Cart"
                                 data-id="{{ product.id }}"
                                 data-title="{{ product.title }}"
