@@ -95,7 +95,7 @@
       </div>
       <div class="modal-body text-center position-relative">
         <div class="timer position-absolute top-0 start-50 translate-middle-x mt-2 fw-bold text-dark" id="countdown">
-          05:00
+          02:00
         </div>
         <img id="qrImage" src="" alt="QR Code" class="img-fluid mt-4 mb-2 rounded shadow-sm" />
         <div class="company fw-semibold text-primary mb-1" id="merchantName">Merchant Name</div>
@@ -202,7 +202,7 @@ document.getElementById("checkoutForm").addEventListener("submit", function (e) 
         qrModal.show();
 
         const countdownEl = document.getElementById("countdown");
-        let remaining = 5 * 60;
+        let remaining = 2 * 60;
         let isPaid = false; // ✅ Prevent duplicate checkout
 
         const countdownInterval = setInterval(() => {

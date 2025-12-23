@@ -98,42 +98,8 @@
         </div>
         <div class="divider" aria-hidden="true"></div>
         <div class="qr-wrap">
-           <img id="qrImage" class="qr" alt="KHQR Payment">
-
-
-{#            <img src="./static/qrcode.png" alt="QR Code" class="qr">#}
+            <img src="./static/qrcode.png" alt="QR Code" class="qr">
         </div>
     </div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-    const cart = [
-        { price: 10, qty: 1 },
-        { price: 5, qty: 2 }
-    ];
-
-    const formData = new FormData();
-    formData.append("cart", JSON.stringify(cart));
-
-    fetch("/buy_now", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            document.getElementById("qrImage").src = data.qr_image;
-            console.log("KHQR Loaded");
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(err => {
-        console.error("QR Error:", err);
-    });
-
-});
-</script>
-
 </body>
 </html>

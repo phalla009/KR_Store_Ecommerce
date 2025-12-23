@@ -6117,63 +6117,13 @@ def checkout():
         print("Exception in /checkout:", e)
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# @app.post('/buy_now')
-# def buy_now():
-#     try:
-#         cart = json.loads(request.form.get('cart', '[]'))
-#         price = sum(float(item['price']) * int(item['qty']) for item in cart)
-#         currency = 'USD'
-#         # Generate KHQR (you already have KHQR token)
-#         khqr = KHQR(token)
-#         qr_str = khqr.create_qr(
-#             bank_account='phallaheang@aclb',
-#             merchant_name='PHALLA',
-#             merchant_city='Phnom Penh',
-#             amount=price,
-#             currency=currency,
-#             store_label='KRShop',
-#             phone_number='855964775515',
-#             bill_number='TRX01234567',
-#             terminal_label='Cashier-01',
-#             static=False
-#         )
-#
-#         md5 = khqr.generate_md5(qr_str)
-#
-#         # Save QR image
-#         qr_object = qrcode.QRCode(
-#             version=1,
-#             error_correction=qrcode.constants.ERROR_CORRECT_L,
-#             box_size=10,
-#             border=4,
-#         )
-#         qr_object.add_data(qr_str)
-#         qr_object.make(fit=True)
-#         img = qr_object.make_image(fill_color="black", back_color="white")
-#         qr_path = "./static/image/qrcode.png"
-#         img.save(qr_path)
-#
-#         return jsonify({
-#             "status": "success",
-#             "amount": price,
-#             "currency": currency,
-#             "md5": md5,
-#             "merchant_name": "PHALLA HEANG",
-#             "qr_url": "/static/image/qrcode.png"
-#
-#         })
-#     except Exception as e:
-#         print("Buy Now Error:", e)
-#         return jsonify({"status": "error", "message": str(e)})
-
 @app.post('/buy_now')
 def buy_now():
     try:
         cart = json.loads(request.form.get('cart', '[]'))
         price = sum(float(item['price']) * int(item['qty']) for item in cart)
         currency = 'USD'
-
-        # Generate KHQR
+        # Generate KHQR (you already have KHQR token)
         khqr = KHQR(token)
         qr_str = khqr.create_qr(
             bank_account='phallaheang@aclb',
@@ -6190,7 +6140,7 @@ def buy_now():
 
         md5 = khqr.generate_md5(qr_str)
 
-        # ✅ Generate QR in memory (NO FILE SAVE)
+        # Save QR image
         qr_object = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -6199,14 +6149,9 @@ def buy_now():
         )
         qr_object.add_data(qr_str)
         qr_object.make(fit=True)
-
         img = qr_object.make_image(fill_color="black", back_color="white")
-
-        buffer = io.BytesIO()
-        img.save(buffer, format="PNG")
-        buffer.seek(0)
-
-        qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+        qr_path = "./static/image/qrcode.png"
+        img.save(qr_path)
 
         return jsonify({
             "status": "success",
@@ -6214,12 +6159,13 @@ def buy_now():
             "currency": currency,
             "md5": md5,
             "merchant_name": "PHALLA HEANG",
-            "qr_image": f"data:image/png;base64,{qr_base64}"
-        })
+            "qr_url": "/static/image/qrcode.png"
 
+        })
     except Exception as e:
         print("Buy Now Error:", e)
         return jsonify({"status": "error", "message": str(e)})
+
 @app.post('/check-payment')
 def check_payment():
     json_data = request.get_json()
