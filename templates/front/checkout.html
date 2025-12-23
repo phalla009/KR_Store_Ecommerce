@@ -184,7 +184,7 @@ document.getElementById("checkoutForm").addEventListener("submit", function (e) 
     .then(qrRes => {
         if (qrRes.data.status !== "success") throw new Error(qrRes.data.message || "Failed to generate QR");
 
-        document.getElementById("qrImage").src = qrRes.data.qr_url;
+        document.getElementById("qrImage").src = qrRes.data.qr_image;
         document.getElementById("qrAmount").textContent = `Amount: ${qrRes.data.currency} ${qrRes.data.amount}`;
         document.querySelector(".company").textContent = qrRes.data.merchant_name;
 

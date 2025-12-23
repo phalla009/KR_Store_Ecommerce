@@ -6218,6 +6218,7 @@ def buy_now():
       "merchant_name": "PHALLA HEANG",
       "qr_image": f"data:image/png;base64,{img_str}"
     })
+
   except Exception as e:
     print("Buy Now Error:", e)
     return jsonify({"status": "error", "message": str(e)})
