@@ -466,32 +466,59 @@ footer a:hover {
 /*KHQR*/
 
 #qrModal .modal-content {
-  border-radius: 12px;
-  overflow: hidden;
+    border-radius: 1rem;
+    border: 2px solid #007bff; /* primary blue border */
+    background: #f8f9fa; /* light background */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    padding: 0;
 }
 
-#qrModal .logo {
-  font-size: 1.5rem;
-  letter-spacing: 1px;
+#qrModal .modal-header {
+    background: linear-gradient(90deg, #0062cc, #33a1ff);
+    color: #fff;
+    font-weight: bold;
+    border-bottom: none;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+#qrModal .modal-body {
+    text-align: center;
+    padding: 2rem 1.5rem;
 }
 
 #qrModal .timer {
-    align-items: center;
-    font-size: 0.9rem;
-    color: #000;
-    background: none;
+    font-size: 1rem;
+    background: #fff;
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.5rem;
+    border: 1px solid #007bff;
 }
 
-#qrModal img {
-  width: 200px;
-  height: auto;
+#qrModal img#qrImage {
+    max-width: 180px;
+    border-radius: 1rem;
+    border: 2px solid #007bff;
+    padding: 0.25rem;
+    background: #fff;
 }
 
 #qrModal .company {
-  font-size: 1rem;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    color: #007bff;
 }
 
 #qrModal #qrAmount {
-  font-size: 1rem;
-  margin-top: 4px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+    color: #212529;
 }
+
+/* Optional: modal backdrop blur for modern effect */
+#qrModal .modal-backdrop.show {
+    backdrop-filter: blur(3px);
+    opacity: 0.6 !important;
+}
+
