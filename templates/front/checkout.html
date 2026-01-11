@@ -5,7 +5,6 @@
     <h2 class="mb-4 text-center">
       <i class="fa fa-credit-card"></i> Checkout
     </h2>
-
     <div class="row">
         <!-- LEFT: Shipping Info -->
         <div class="col-lg-5 mb-4">
@@ -152,8 +151,13 @@ function renderCartSummary() {
 }
 renderCartSummary();
 
+// Dark Mode sync
+if(localStorage.getItem('darkMode') === 'enabled') {
+    document.body.classList.add('dark-mode');
+}
+
 // Checkout form submit
-document.getElementById("checkoutForm").addEventListener("submit", function (e) {
+document.getElementById("checkoutForm").addEventListener("submit", function(e){
     e.preventDefault();
 
     if (!cart_list.length) {
@@ -184,10 +188,12 @@ document.getElementById("checkoutForm").addEventListener("submit", function (e) 
     .then(qrRes => {
         if (qrRes.data.status !== "success") throw new Error(qrRes.data.message || "Failed to generate QR");
 
+        // Fill QR Modal
         document.getElementById("qrImage").src = qrRes.data.qr_image;
         document.getElementById("qrAmount").textContent = `Amount: ${qrRes.data.currency} ${qrRes.data.amount}`;
         document.querySelector(".company").textContent = qrRes.data.merchant_name;
 
+        // Hidden md5 input
         let md5Input = document.getElementById("md5");
         if (!md5Input) {
             md5Input = document.createElement("input");
@@ -201,69 +207,8 @@ document.getElementById("checkoutForm").addEventListener("submit", function (e) 
         const qrModal = new bootstrap.Modal(qrModalEl, { backdrop: 'static', keyboard: false });
         qrModal.show();
 
-        const countdownEl = document.getElementById("countdown");
-        let remaining = 2 * 60;
-        let isPaid = false; // ✅ Prevent duplicate checkout
-
-        const countdownInterval = setInterval(() => {
-            const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
-            const seconds = String(remaining % 60).padStart(2, '0');
-            countdownEl.textContent = `${minutes}:${seconds}`;
-            if (remaining <= 0) {
-                clearInterval(countdownInterval);
-                clearInterval(pollInterval);
-                showToast("Payment timeout! Please try again.", "error");
-                qrModal.hide();
-            }
-            remaining--;
-        }, 1000);
-
-        const pollInterval = setInterval(() => {
-            if (isPaid) return; // ✅ Stop duplicate checkout
-
-            axios.post('/check-payment', { md5: md5Input.value })
-            .then(response => {
-                if (response.data.data && !isPaid) {
-                    isPaid = true; // ✅ Mark as paid
-                    clearInterval(countdownInterval);
-                    clearInterval(pollInterval);
-
-                    // ✅ Checkout once only
-                    axios.post("/checkout", orderData)
-                    .then(orderRes => {
-                        if (orderRes.data.status === "success") {
-                            localStorage.removeItem("cart_list");
-                            cart_list = [];
-                            renderCartSummary();
-                            if (cart) cart.innerText = "Cart(0)";
-
-                            showToast("Payment successful! Redirecting...", "success");
-                            qrModal.hide();
-
-                            window.location.replace("{{ url_for('customer_thanks') }}");
-                        } else {
-                            showToast("Checkout failed: " + (orderRes.data.message || "Unknown error"), "error");
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Checkout error:", err);
-                        showToast("Error during checkout.", "error");
-                    });
-                } else {
-                    console.log("Waiting for QR scan...");
-                }
-            })
-            .catch(err => {
-                console.error("Payment check error:", err);
-                clearInterval(countdownInterval);
-                clearInterval(pollInterval);
-            });
-        }, 3000);
-
-        qrModalEl.addEventListener("hidden.bs.modal", () => {
-            clearInterval(countdownInterval);
-            clearInterval(pollInterval);
-        });
+        // Start countdown + polling safely
+        startPaymentFlow(md5Input.value, orderData, qrModal);
     })
     .catch(err => {
         showToast(err.message || "Failed to start payment.", "error");
@@ -272,70 +217,73 @@ document.getElementById("checkoutForm").addEventListener("submit", function (e) 
     .finally(() => submitBtn.disabled = false);
 });
 
-// Countdown + payment check
-function startQRCountdown(duration, md5, modalInstance) {
-  const countdownEl = document.getElementById("countdown");
-  let remaining = duration;
+// ---------------------------
+// Payment Flow: Countdown + Poll
+// ---------------------------
+let countdownInterval = null;
+let pollInterval = null;
 
-  const interval = setInterval(() => {
-    const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
-    const seconds = String(remaining % 60).padStart(2, '0');
-    countdownEl.textContent = `${minutes}:${seconds}`;
+function startPaymentFlow(md5, orderData, qrModal) {
+    const countdownEl = document.getElementById("countdown");
+    let remaining = 120; // 2 minutes
+    let isPaid = false;
 
-    if (remaining <= 0) {
-      clearInterval(interval);
-      clearInterval(checkInterval);
-      showToast("Payment timeout! Cart is not cleared.", "error");
-      modalInstance.hide();
-    }
-    remaining--;
-  }, 1000);
+    // Countdown timer
+    countdownInterval = setInterval(() => {
+        const m = String(Math.floor(remaining / 60)).padStart(2, "0");
+        const s = String(remaining % 60).padStart(2, "0");
+        countdownEl.textContent = `${m}:${s}`;
 
-  const checkInterval = setInterval(() => {
-    fetch("/check-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ md5 })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data?.status === "SUCCESS" || data?.transaction_status === "SUCCESS") {
-        // ✅ Clear cart immediately
-        localStorage.removeItem("cart_list");
-        cart_list = [];
-        renderCartSummary();
-        if (cart) cart.innerText = "Cart(0)";
+        if (remaining <= 0) {
+            stopAll();
+            showToast("Payment timeout! Please try again.", "error");
+            qrModal.hide();
+        }
+        remaining--;
+    }, 1000);
 
-        showToast("Payment successful! Thank you!", "success");
+    // Poll server for payment
+    pollInterval = setInterval(() => {
+        if (isPaid) return;
 
-        // ✅ Send Telegram notification
-        fetch("/send-telegram", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cart: data.cart, amount: data.amount })
-        });
+        axios.post("/check-payment", { md5 })
+        .then(res => {
+            if (res.data?.status === "SUCCESS" || res.data?.transaction_status === "SUCCESS") {
+                isPaid = true;
+                stopAll();
 
-        clearInterval(interval);
-        clearInterval(checkInterval);
+                // Clear cart
+                localStorage.removeItem("cart_list");
+                cart_list = [];
+                renderCartSummary();
+                if(cart) cart.innerText = "Cart(0)";
 
-        // ✅ Now hide modal
-        modalInstance.hide();
-      }
-    })
-    .catch(err => console.error("Check payment error:", err));
-  }, 5000);
+                showToast("Payment successful! Redirecting...", "success");
 
-  // Prevent clearing intervals twice
-  const modalEl = modalInstance._element || document.getElementById("qrModal");
-  modalEl.addEventListener("hidden.bs.modal", () => {
-    clearInterval(interval);
-    clearInterval(checkInterval);
-  });
+                // Optional: notify backend / telegram
+                axios.post("/send-telegram", { cart: orderData.cart, amount: res.data.amount }).catch(err=>console.error(err));
+
+                // Checkout order
+                axios.post("/checkout", orderData)
+                    .then(orderRes => {
+                        window.location.replace("{{ url_for('customer_thanks') }}");
+                    })
+                    .catch(err => console.error("Checkout error:", err));
+            }
+        })
+        .catch(err => console.error("Payment check error:", err));
+    }, 3000);
+
+    // Clear intervals if modal closed
+    qrModal._element.addEventListener("hidden.bs.modal", () => {
+        stopAll();
+    }, { once: true });
 }
 
-// Dark Mode sync
-if(localStorage.getItem('darkMode') === 'enabled') {
-    document.body.classList.add('dark-mode');
+function stopAll() {
+    if(countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+    if(pollInterval) { clearInterval(pollInterval); pollInterval = null; }
 }
 </script>
+
 {% endblock %}
