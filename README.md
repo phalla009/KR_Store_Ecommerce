@@ -1,4 +1,6 @@
-=========KR_Store_Ecommerce=========
+=========
+KR_Store_Ecommerce 
+=========
 
 1. DESCRIPTION
 --------------
