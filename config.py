@@ -10,7 +10,7 @@ USD_TO_KHR = 4100
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 587
 MAIL_USE_TLS = True
-MAIL_USERNAME = 'hphalla3@gmail.com'
+MAIL_USERNAME = 'hphalla@gmail.com'
 MAIL_PASSWORD = 'iflq jnct ngwy ucqg'
 MAIL_DEFAULT_SENDER = 'hphalla3@gmail.com'
 
