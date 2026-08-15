@@ -6043,7 +6043,9 @@ def get_filtered_products():
 @app.route('/krecomstore/')
 @app.get('/home')
 def home():
-    return redirect('/krecomstore')
+    module = 'home'
+    products = get_filtered_products()
+    return render_template('front/home.html', products=products)
 @app.get('/cart')
 def cart():
     return render_template('front/cart.html')
