@@ -10,6 +10,7 @@ from qr import token
 import io
 import base64
 app = Flask(__name__)
+app.config.from_object('config')
 app.secret_key = os.urandom(24)
 mail = Mail(app)
 # Create a Blueprint with your prefix
