@@ -1,6 +1,6 @@
 import json
 import os
-from flask import Flask, render_template, request, jsonify,redirect,url_for,flash
+from flask import Blueprint, Flask, flash, jsonify, redirect, render_template, request, url_for
 from flask_mail import Mail,Message
 from checkout import process_checkout
 import requests
