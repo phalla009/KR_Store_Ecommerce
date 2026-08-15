@@ -14,7 +14,7 @@ app.config.from_object('config')
 app.secret_key = os.urandom(24)
 mail = Mail(app)
 # Create a Blueprint with your prefix
-bp = Blueprint('krecomstore', __name__, url_prefix='/krecomstore')
+bp = Blueprint('main', __name__, url_prefix='/krecomstore')
 products =[
     {
       "id": 1,
