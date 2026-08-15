@@ -6039,6 +6039,8 @@ def get_filtered_products():
                                if x['category'] in priority else len(priority)))
   return products
 @app.get('/')
+@app.route('/krecomstore')
+@app.route('/krecomstore/')
 @app.get('/home')
 def home():
     module = 'home'
