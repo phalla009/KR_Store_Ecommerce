@@ -1,4 +1,27 @@
 {
-  "source": "/krecomstore",
-  "destination": "https://krecomstore.phalla.lol/krecomstore"
+  "version": 2,
+  "builds": [
+    {
+      "src": "app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/krecomstore",
+      "destination": "/app.py"
+    },
+    {
+      "source": "/krecomstore/",
+      "destination": "/app.py"
+    },
+    {
+      "source": "/krecomstore/:path*",
+      "destination": "/app.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/app.py"
+    }
+  ]
 }
